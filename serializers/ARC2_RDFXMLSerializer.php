@@ -42,9 +42,6 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer
             }
             if ('o' == $type) {
                 $v = $this->expandPName($v);
-                if (!preg_match('/^[a-z0-9]{2,}\:[^\s]+$/is', $v)) {
-                    return $this->getTerm(['value' => $v, 'type' => 'literal'], $type);
-                }
 
                 return ' rdf:resource="'.htmlspecialchars($v).'"';
             }
