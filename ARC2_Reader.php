@@ -206,7 +206,25 @@ class ARC2_Reader extends ARC2_Class
 
     public function getDataStream($data)
     {
+        $data = $this->stripBOM($data);
         return ['type' => 'data', 'pos' => 0, 'headers' => [], 'size' => strlen($data), 'data' => $data, 'buffer' => ''];
+    }
+    
+    function stripBOM($data)
+    {
+      $boms = array(
+        'UTF32_BIG_ENDIAN_BOM' => '\x00\x00\xFE\xFF',
+        'UTF32_LITTLE_ENDIAN_BOM' => '\xFF\xFE\x00\x00',
+        'UTF16_BIG_ENDIAN_BOM' => '\xFE\xFF',
+        'UTF16_LITTLE_ENDIAN_BOM' => '\xFF\xFE',
+        'UTF8_BOM' => '\xEF\xBB\xBF'
+      );
+      foreach($boms as $bom) {
+        if(preg_match("/^$bom/", $data)) {
+          $data = preg_replace("/^$bom/", '', $data);
+        }
+      }
+      return $data;
     }
 
     public function getSocketStream($url)
