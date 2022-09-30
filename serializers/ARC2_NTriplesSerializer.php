@@ -30,9 +30,11 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer
             if (preg_match('/^\_\:/', $v)) {
                 return $this->getTerm(['value' => $v, 'type' => 'bnode']);
             }
-            // uri
-            if (preg_match('/^[a-z0-9]+\:[^\s\"]*$/is'.($this->has_pcre_unicode ? 'u' : ''), $v)) {
-                return $this->getTerm(['value' => $v, 'type' => 'uri']);
+            if (preg_match('/^(([a-z0-9]+)\:)[^\s\"]*$/is', $v, $m)) {
+              if (!empty($m[2]) && isset($this->ns[$m[2]])) {
+                $v = preg_replace('/^' . preg_quote($m[1]) . '/', $this->ns[$m[2]], $v);
+              }
+              return '<' . $this->escape($v) . '>';
             }
             // fallback for non-unicode environments: subjects and predicates can't be literals.
             if (in_array($term, ['s', 'p'])) {
@@ -86,7 +88,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer
                     $os = [['value' => $os, 'type' => 'literal']];
                 }
                 foreach ($os as $o) {
-                    $o = $this->getTerm($o, 'oâ€š');
+                    $o = $this->getTerm($o, 'o‚');
                     $r .= $r ? $nl : '';
                     $r .= $s.' '.$p.' '.$o.' .';
                 }
