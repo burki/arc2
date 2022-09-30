@@ -142,10 +142,10 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer
                 $r = substr($r, 0, -1);
             }
             // uppercase hex chars
-            $r = preg_replace_callback('/(\\\u)([0-9a-f]{4})', function ($matches) {
+            $r = preg_replace_callback('/(\\\u)([0-9a-f]{4})/', function ($matches) {
                 return $matches[1].strtoupper($matches[2]);
             }, $r);
-            $r = preg_replace_callback('/(\\\U)([0-9a-f]{8})', function ($matches) {
+            $r = preg_replace_callback('/(\\\U)([0-9a-f]{8})/', function ($matches) {
                 return $matches[1].strtoupper($matches[2]);
             }, $r);
         }
