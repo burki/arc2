@@ -93,23 +93,25 @@ class ARC2_TurtleSerializer extends ARC2_RDFSerializer
         }
         
         /* literal */
+        $value = str_replace('\\', '\\\\', $v['value']);
+        
         $quot = '"';
-        if (preg_match('/\"/', $v['value']) || preg_match('/[\x0d\x0a]/', $v['value'])) {
+        if (preg_match('/\"/', $value) || preg_match('/[\x0d\x0a]/', $value)) {
             $quot = '"""';
-            if (preg_match('/\"\"\"/', $v['value']) || preg_match('/\"$/', $v['value']) || preg_match('/^\"/', $v['value'])) {
+            if (preg_match('/\"\"\"/', $value) || preg_match('/\"$/', $value) || preg_match('/^\"/', $value)) {
                 $quot = "'''";
-                $v['value'] = preg_replace("/'$/", "' ", $v['value']);
-                $v['value'] = preg_replace("/^'/", " '", $v['value']);
-                $v['value'] = str_replace("'''", '\\\'\\\'\\\'', $v['value']);
+                $value = preg_replace("/'$/", "' ", $value);
+                $value = preg_replace("/^'/", " '", $value);
+                $value = str_replace("'''", '\\\'\\\'\\\'', $value);
             }
         }
-        if ((1 == strlen($quot)) && preg_match('/[\x0d\x0a]/', $v['value'])) {
+        if ((1 == strlen($quot)) && preg_match('/[\x0d\x0a]/', $value)) {
             $quot = $quot.$quot.$quot;
         }
         $suffix = isset($v['lang']) && $v['lang'] ? '@'.$v['lang'] : '';
         $suffix = isset($v['datatype']) && $v['datatype'] ? '^^'.$this->getTerm($v['datatype'], 'dt') : $suffix;
 
-        return $quot.$v['value'].$quot.$suffix;
+        return $quot.$value.$quot.$suffix;
     }
 
     public function getHead()
